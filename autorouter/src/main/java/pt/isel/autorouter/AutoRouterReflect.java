@@ -10,21 +10,40 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+
 public class AutoRouterReflect {
     public static Stream<ArHttpRoute> autorouterReflect(Object controller) {
-        // Only to get methods or all declaredMembers?
-        // TODO: Should the controller inputs be public or not?
 
-        var controllerClass = controller.getClass();
+        // class of controller object
+        Class<?> controllerClass = controller.getClass();
 
-        for (Method m : controllerClass.getDeclaredMethods()){
-            System.out.println("Method: " + m.getName());
-            System.out.println("Parameters: ");
-            for(Parameter p : m.getParameters()) System.out.println("\t" + p);
-            for(Annotation a : m.getDeclaredAnnotations()) System.out.println("\t" + a);
-            System.out.println("Return Type: " + m.getReturnType());
-            System.out.println("---+---+---+---+---+---");
+        // List of routes
+        List<ArHttpRoute> routes = new ArrayList<>();
+
+        // Looping the declared methods of the class
+        for (Method method : controllerClass.getDeclaredMethods()) {
+
+            // Check if the method is annotated with @AutoRoute and returns an Either ..check this out later TODO()
+            if (method.isAnnotationPresent(AutoRouter.class) &&
+                    Either.class.equals(method.getReturnType())) { // check it out TODO()
+
+                // Get the method and path from the annotation
+                AutoRouter routeAnnotation = method.getAnnotation(AutoRouter.class);
+                ArVerb verbMethod = routeAnnotation.method();
+                String path = routeAnnotation.path();
+
+                // Create the ArHttpRoute object
+//                ArHttpRoute route = new ArHttpRoute(httpMethod, path, ctx -> {
+//                    TODO()
+//                });
+
+                // Add the ArHttpRoute object to the list
+                routes.add(route);
+            }
         }
-        return Stream.empty();
+
+        // Return the stream of ArHttpRoute objects
+        return routes.stream();
     }
+
 }
