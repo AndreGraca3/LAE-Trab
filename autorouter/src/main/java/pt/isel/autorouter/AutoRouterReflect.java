@@ -1,10 +1,10 @@
 package pt.isel.autorouter;
 
+import pt.isel.autorouter.annotations.AutoRoute;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,26 +24,34 @@ public class AutoRouterReflect {
         for (Method method : controllerClass.getDeclaredMethods()) {
 
             // Check if the method is annotated with @AutoRoute and returns an Either ..check this out later TODO()
-            if (method.isAnnotationPresent(AutoRouter.class) &&
-                    Either.class.equals(method.getReturnType())) { // check it out TODO()
+            if (method.isAnnotationPresent(AutoRoute.class) &&
+                    method.getReturnType().isAssignableFrom(Optional.class)) { // check it out TODO()
 
-                // Get the method and path from the annotation
-                AutoRouter routeAnnotation = method.getAnnotation(AutoRouter.class);
-                ArVerb verbMethod = routeAnnotation.method();
-                String path = routeAnnotation.path();
+                // Get annotation AutoRoute.
+                AutoRoute routeAnnotation = method.getAnnotation(AutoRoute.class);
 
-                // Create the ArHttpRoute object
-//                ArHttpRoute route = new ArHttpRoute(httpMethod, path, ctx -> {
-//                    TODO()
-//                });
+                ArHttpRoute route = createArHttpRoute(controller,routeAnnotation,method);
 
                 // Add the ArHttpRoute object to the list
                 routes.add(route);
             }
+        }
+        // Printing for Test
+        for(ArHttpRoute route : routes){
+            System.out.println(route);
         }
 
         // Return the stream of ArHttpRoute objects
         return routes.stream();
     }
 
+
+    private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
+
+        // Get the method and path from the annotation
+        ArVerb verbMethod = annotation.method();
+        String path = annotation.path();
+
+        return null;
+    }
 }

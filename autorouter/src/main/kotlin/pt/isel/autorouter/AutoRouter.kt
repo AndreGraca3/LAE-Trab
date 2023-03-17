@@ -7,8 +7,3 @@ fun Stream<ArHttpRoute>.jsonServer() = JsonServer(this)
 fun Any.autorouterReflect() = AutoRouterReflect.autorouterReflect(this)
 
 fun Any.autorouterDynamic() = AutoRouterDynamic.autorouterDynamic(this)
-
-annotation class AutoRouter(
-    val path : String,
-    val method : ArVerb
-)
