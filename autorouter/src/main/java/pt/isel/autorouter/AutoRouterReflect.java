@@ -1,17 +1,20 @@
 package pt.isel.autorouter;
 
+import pt.isel.autorouter.annotations.ArBody;
+import pt.isel.autorouter.annotations.ArQuery;
+import pt.isel.autorouter.annotations.ArRoute;
 import pt.isel.autorouter.annotations.AutoRoute;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Parameter;
+import java.util.*;
 import java.util.stream.Stream;
 
 
 public class AutoRouterReflect {
+
     public static Stream<ArHttpRoute> autorouterReflect(Object controller) {
 
         // class of controller object
@@ -29,6 +32,7 @@ public class AutoRouterReflect {
 
                 // Get annotation AutoRoute.
                 AutoRoute routeAnnotation = method.getAnnotation(AutoRoute.class);
+
 
                 ArHttpRoute route = createArHttpRoute(controller,routeAnnotation,method);
 
@@ -48,10 +52,36 @@ public class AutoRouterReflect {
 
     private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
 
-        // Get the method and path from the annotation
-        ArVerb verbMethod = annotation.method();
+        ArVerb verbMethod = annotation.method(); // returns http method.
         String path = annotation.path();
 
-        return null;
+        Map<String, String> RouteArgs = new HashMap<>();
+        Map<String, String> QueryArgs = new HashMap<>();
+        Map<String, String> BodyArgs = new HashMap<>();
+
+        for(int i = 0; i < method.getParameterCount(); i++) {
+            Parameter parameter = method.getParameters()[i];
+            //System.out.println(parameter.getName());
+            if(parameter.isAnnotationPresent(ArRoute.class)){
+                String name = parameter.getName();
+                String value = parameter.toString();
+                RouteArgs.put(name,value);
+            } else continue;
+            if(parameter.isAnnotationPresent(ArQuery.class)){
+                String name = parameter.getName();
+                String value = parameter.toString();
+                QueryArgs.put(name,value);
+            } else continue;
+            if(parameter.isAnnotationPresent(ArBody.class)){
+                String name = parameter.getName();
+                String value = parameter.toString();
+                BodyArgs.put(name,value);
+            }
+        }
+
+        //ArHttpHandler handler;
+        //handler.handle(RouteArgs,QueryArgs,BodyArgs);
+
+        return new ArHttpRoute(method.getName(),verbMethod,path, null);
     }
 }

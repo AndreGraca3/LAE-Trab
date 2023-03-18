@@ -1,6 +1,9 @@
 package pt.isel
 
 import pt.isel.autorouter.ArVerb
+import pt.isel.autorouter.annotations.ArBody
+import pt.isel.autorouter.annotations.ArQuery
+import pt.isel.autorouter.annotations.ArRoute
 import pt.isel.autorouter.annotations.AutoRoute
 import java.util.*
 
@@ -30,7 +33,7 @@ class ClassroomController {
      */
     @Synchronized
     @AutoRoute(path = "/classroom/{classroom}")
-    fun search(classroom: String, student: String?): Optional<List<Student>> {
+    fun search(@ArRoute classroom: String, @ArQuery student: String?): Optional<List<Student>> {
         return repo[classroom]
             ?.let {
                 if(student == null) Optional.of(it)
@@ -49,9 +52,9 @@ class ClassroomController {
     @Synchronized
     @AutoRoute(path = "/classroom/{classroom}/students/{nr}", method = ArVerb.PUT)
     fun addStudent(
-        classroom: String,
-        nr: Int,
-        s: Student
+        @ArRoute classroom: String,
+        @ArRoute nr: Int,
+        @ArBody s: Student
     ): Optional<Student> {
         if(nr != s.nr) return Optional.empty() // return 409 instead ?
         val stds = repo[classroom] ?: emptyList()
@@ -64,7 +67,7 @@ class ClassroomController {
      */
     @Synchronized
     @AutoRoute(path = "/classroom/{classroom}/students/{nr}", method = ArVerb.DELETE)
-    fun removeStudent(classroom: String, nr: Int) : Optional<Student> {
+    fun removeStudent(@ArRoute classroom: String, @ArRoute nr: Int) : Optional<Student> {
         val stds = repo[classroom] ?: return Optional.empty()
         val s = stds.firstOrNull { it.nr == nr } ?: return Optional.empty()
         repo[classroom] = stds.filter { it.nr != nr }
