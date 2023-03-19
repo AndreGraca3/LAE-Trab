@@ -9,6 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -26,23 +27,19 @@ public class AutoRouterReflect {
         // Looping the declared methods of the class
         for (Method method : controllerClass.getDeclaredMethods()) {
 
-            // Check if the method is annotated with @AutoRoute and returns an Either ..check this out later TODO()
+            // Check if the method is annotated with @AutoRoute and ReturnType Optional
             if (method.isAnnotationPresent(AutoRoute.class) &&
-                    method.getReturnType().isAssignableFrom(Optional.class)) { // check it out TODO()
+                    method.getReturnType().isAssignableFrom(Optional.class)) {
 
                 // Get annotation AutoRoute.
                 AutoRoute routeAnnotation = method.getAnnotation(AutoRoute.class);
 
-
-                ArHttpRoute route = createArHttpRoute(controller,routeAnnotation,method);
+                // Method to create arHttpRoute
+                ArHttpRoute route = createArHttpRoute(controller, routeAnnotation, method);
 
                 // Add the ArHttpRoute object to the list
                 routes.add(route);
             }
-        }
-        // Printing for Test
-        for(ArHttpRoute route : routes){
-            System.out.println(route);
         }
 
         // Return the stream of ArHttpRoute objects
@@ -52,36 +49,43 @@ public class AutoRouterReflect {
 
     private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
 
-        ArVerb verbMethod = annotation.method(); // returns http method.
-        String path = annotation.path();
+        // Creation of ArHttpRoute
+        return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(),
+                (routeArgs, queryArgs, bodyArgs) -> {
 
-        Map<String, String> RouteArgs = new HashMap<>();
-        Map<String, String> QueryArgs = new HashMap<>();
-        Map<String, String> BodyArgs = new HashMap<>();
+                    // Get method parameters
+                    Parameter[] parameters = method.getParameters();
 
-        for(int i = 0; i < method.getParameterCount(); i++) {
-            Parameter parameter = method.getParameters()[i];
-            //System.out.println(parameter.getName());
-            if(parameter.isAnnotationPresent(ArRoute.class)){
-                String name = parameter.getName();
-                String value = parameter.toString();
-                RouteArgs.put(name,value);
-            } else continue;
-            if(parameter.isAnnotationPresent(ArQuery.class)){
-                String name = parameter.getName();
-                String value = parameter.toString();
-                QueryArgs.put(name,value);
-            } else continue;
-            if(parameter.isAnnotationPresent(ArBody.class)){
-                String name = parameter.getName();
-                String value = parameter.toString();
-                BodyArgs.put(name,value);
-            }
-        }
+                    // Array of args to prepare method invoke
+                    Object[] args = new Object[parameters.length];
 
-        //ArHttpHandler handler;
-        //handler.handle(RouteArgs,QueryArgs,BodyArgs);
+                    for (int i = 0; i < parameters.length; i++) {
+                        Parameter parameter = parameters[i];
+                        String parameterName = parameter.getName();
 
-        return new ArHttpRoute(method.getName(),verbMethod,path, null);
+                            //@ArRoute Annotation and get arg from map
+                        if (parameter.isAnnotationPresent(ArRoute.class)) {
+                            args[i] = routeArgs.get(parameterName);
+
+                            //@ArQuery Annotation and get arg from map
+                        } else if (parameter.isAnnotationPresent(ArQuery.class)) {
+                            args[i] = queryArgs.get(parameterName);
+
+                            //@ArBody Annotation and get arg from map
+                        } else if (parameter.isAnnotationPresent(ArBody.class)) {
+                            args[i] = bodyArgs.get(parameterName);
+
+                            // Invalid Parameter Annotation
+                        } else
+                            throw new InvalidParameterException("Missing Annotation in Parameter: " + parameterName);
+                    }
+                    try {
+                        // return the handler of this ArHttpRoute object
+                        return (Optional<?>) method.invoke(controller, args);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
     }
 }

@@ -1,43 +1,40 @@
 package pt.isel.autorouter;
 
-public class Either<L, R> {
-    private final L left;
-    private final R right;
-    private final boolean isLeft;
+public class Either<T> {
+    private final T value;
+    private final Exception error;
 
-    private Either(L left, R right, boolean isLeft) {
-        this.left = left;
-        this.right = right;
-        this.isLeft = isLeft;
+    public Either(T value) {
+        this.value = value;
+        this.error = null;
     }
 
-    public static <L, R> Either<L, R> left(L left) {
-        return new Either<>(left, null, true);
+    public Either(Exception error) {
+        this.value = null;
+        this.error = error;
     }
 
-    public static <L, R> Either<L, R> right(R right) {
-        return new Either<>(null, right, false);
+    public boolean isSuccess() {
+        return value != null;
     }
 
-    public boolean isLeft() {
-        return isLeft;
+    public boolean isError() {
+        return error != null;
     }
 
-    public boolean isRight() {
-        return !isLeft;
-    }
-
-    public L getLeft() {
-        if (!isLeft) {
-            throw new IllegalStateException("Either is not left");
+    public T getValue() {
+        if (isSuccess()) {
+            return value;
+        } else {
+            throw new IllegalStateException("Cannot get value from error Either");
         }
-        return left;
     }
 
-    public R getRight() {
-        if (isLeft) {
-            throw new IllegalStateException("Either is not right");
+    public Exception getError() {
+        if (isError()) {
+            return error;
+        } else {
+            throw new IllegalStateException("Cannot get error from success Either");
         }
-        return right;
     }
 }
