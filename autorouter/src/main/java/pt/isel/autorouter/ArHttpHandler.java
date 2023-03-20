@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface ArHttpHandler {
     Optional<?> handle(
-            Map<String, String> routeArgs, // function name and ???
+            Map<String, String> routeArgs, // parameter name and value.toString()
             Map<String, String> queryArgs,
             Map<String, String> bodyArgs
     );
