@@ -4,6 +4,7 @@
 package pt.isel
 
 import pt.isel.autorouter.ArHttpRoute
+import pt.isel.autorouter.ArVerb
 import pt.isel.autorouter.autorouterDynamic
 import pt.isel.autorouter.autorouterReflect
 import kotlin.test.Test
@@ -82,7 +83,7 @@ class AutoRouterTestForFootball {
     }
 
     fun add_Player(routes: List<ArHttpRoute>) {
-        val r = routes.first { it.path == "/teams/{team}/player/{number}" }
+        val r = routes.first { it.path == "/teams/{team}/player/{number}" && it.method == ArVerb.PUT }
         val res = r.handler.handle(
             mapOf(
                 "team" to "Benfica",
@@ -90,7 +91,8 @@ class AutoRouterTestForFootball {
             ),
             emptyMap(),
             mapOf(
-                "number" to "19", "name" to "Luís Falcão", "position" to "Avançado")
+                "number" to "19",
+                "name" to "Luís Falcão", "position" to "Avançado"
             )
         )
         assertEquals(

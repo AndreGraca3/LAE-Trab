@@ -26,18 +26,29 @@ public class AutoRouterReflect {
                 .map(m -> createArHttpRoute(controller, m.getAnnotation(AutoRoute.class), m));
     }
 
-
-
-    private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
+    private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method)  {
 
         ArHttpHandler handler = (routeArgs, queryArgs, bodyArgs) -> {
 
             Stream<Object> args = Arrays.stream(method.getParameters())     //Stream of args for method invoke
                     .map(p -> {
                         String pName = p.getName();
-                        if (p.isAnnotationPresent(ArRoute.class)) return routeArgs.get(pName);
+                        Class<?> pType = p.getType();
+                        if (p.isAnnotationPresent(ArRoute.class)) {
+                            try {
+                                return parse(pName,pType,routeArgs);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                         if (p.isAnnotationPresent(ArQuery.class)) return queryArgs.get(pName);
-                        if (p.isAnnotationPresent(ArBody.class)) return bodyArgs.get(pName);
+                        if (p.isAnnotationPresent(ArBody.class)) {
+                            try {
+                                return parse(pName,pType,bodyArgs);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                         else throw new InvalidParameterException("Missing Annotation in Parameter: " + pName);
                     });
             try {
@@ -49,20 +60,31 @@ public class AutoRouterReflect {
         return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler);
     }
 
-    private <T> bodyParse(Class<?> type, Map<String,String> bodyArgs) throws NoSuchMethodException { // obj = Player(number=88,name="whatever")
+    private static <T> Object parse(String name, Class<?> type, Map<String, String> args) throws Exception { // obj = Player(number=88,name="some name")
+
+        if (type.isPrimitive())
+            return parseObject(type,args.get(name)); // "19" => 19
+
+        if(String.class == type)
+            return args.get(name);
 
         if(type.getConstructors().length != 1) throw new NoSuchMethodException();
 
-        Parameter[] parameters = type.getConstructor().getParameters();
+        Parameter[] p = type.getDeclaredConstructor().getParameters();
 
-        for (int i = 0; i < parameters.length; i++) {
-            String pname = parameters[i].getName();
-            Class<?> ptype = parameters[i].getType();
-            String prop_val = bodyArgs.get(pname);
-            if(prop_val != null){
-                if(prop_val.)
-            }
+        List arr = new ArrayList();
+
+        for (Parameter parameter : p) {
+            String currName = parameter.getName(); // "number"
+            Class<?> currType = parameter.getType(); // "int"
+            String prop_val = args.get(currName); // "19"
+            arr.add(parseObject(currType,prop_val));
         }
+        return type.getDeclaredConstructor().newInstance(args);
+    }
 
+    private static Object parseObject(Class clazz, String value) { // converts any string to an object.
+        if(Integer.class == clazz) return Integer.parseInt(value);
+        else return value;
     }
 }
