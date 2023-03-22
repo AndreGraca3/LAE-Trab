@@ -61,8 +61,7 @@ class ClassroomController {
         repo[classroom] = stds.filter { it.nr != nr } + s
         return Optional.of(s)
     }
-    /**
-     * Example:
+    /**     * Example:
      *   curl --request DELETE http://localhost:4000/classroom/i42d/students/4536
      */
     @Synchronized
