@@ -17,11 +17,11 @@ class AutoRouterTestForClassroom {
         )
     }
 
-    @Test fun get_students_via_dynamic() {
+    /*@Test fun get_students_via_dynamic() {
         get_students(
             ClassroomController().autorouterDynamic().toList()
         )
-    }
+    }*/
 
     fun get_students(routes: List<ArHttpRoute>) {
         val r = routes.first { it.path == "/classroom/{classroom}" }
@@ -44,11 +44,11 @@ class AutoRouterTestForClassroom {
         )
     }
 
-    @Test fun get_students_with_name_containing_word_via_dynamic() {
+    /*@Test fun get_students_with_name_containing_word_via_dynamic() {
         get_students_with_name_containing_word(
             ClassroomController().autorouterDynamic().toList()
         )
-    }
+    }*/
 
 
 

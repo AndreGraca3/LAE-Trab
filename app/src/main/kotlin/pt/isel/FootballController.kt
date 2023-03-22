@@ -7,7 +7,7 @@ import pt.isel.autorouter.annotations.ArRoute
 import pt.isel.autorouter.annotations.AutoRoute
 import java.util.*
 
-class ourController {
+class FootballController {
 
     val teams = mutableMapOf(
         "Benfica" to listOf(
