@@ -4,5 +4,5 @@ import pt.isel.autorouter.autorouterReflect
 import pt.isel.autorouter.jsonServer
 
 fun main() {
-    ClassroomController().autorouterReflect().jsonServer().start(4000)
+    ourController().autorouterReflect().jsonServer().start(4000)
 }

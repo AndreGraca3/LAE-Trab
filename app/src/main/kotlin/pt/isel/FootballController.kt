@@ -15,14 +15,14 @@ class FootballController {
             Player(27,"Rafa","Avançado"),
             Player(20,"João Mário","Médio"),
             Player(66,"António Silva","Defesa"),
-            Player(6,"Pah","Defesa")
+            Player(6,"Bah","Defesa")
         ),
         "Sporting" to listOf(
             Player(11,"Nuno Santos","Avançado"),
             Player(17,"Francisco Trincão","Avançado"),
             Player(20,"Paulinho","Avançado"),
             Player(13,"Luís Neto","Defesa"),
-            Player(1,"António Adám","Guarda-Redes")
+            Player(1,"António Adán","Guarda-Redes")
         )
     )
 
