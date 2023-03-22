@@ -62,4 +62,5 @@ class AutoRouterTestForClassroom {
             listOf(Student(4536, "Isel Maior", 7, 5)),
             res.get() as List<Student>)
     }
+
 }

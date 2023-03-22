@@ -5,7 +5,9 @@ import pt.isel.autorouter.annotations.ArQuery;
 import pt.isel.autorouter.annotations.ArRoute;
 import pt.isel.autorouter.annotations.AutoRoute;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Stream;
@@ -23,6 +25,7 @@ public class AutoRouterReflect {
         return methods.filter(m -> m.isAnnotationPresent(AutoRoute.class) && m.getReturnType() == Optional.class)
                 .map(m -> createArHttpRoute(controller, m.getAnnotation(AutoRoute.class), m));
     }
+
 
 
     private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
@@ -44,5 +47,22 @@ public class AutoRouterReflect {
             }
         };
         return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler);
+    }
+
+    private <T> bodyParse(Class<?> type, Map<String,String> bodyArgs) throws NoSuchMethodException { // obj = Player(number=88,name="whatever")
+
+        if(type.getConstructors().length != 1) throw new NoSuchMethodException();
+
+        Parameter[] parameters = type.getConstructor().getParameters();
+
+        for (int i = 0; i < parameters.length; i++) {
+            String pname = parameters[i].getName();
+            Class<?> ptype = parameters[i].getType();
+            String prop_val = bodyArgs.get(pname);
+            if(prop_val != null){
+                if(prop_val.)
+            }
+        }
+
     }
 }

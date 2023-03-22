@@ -90,7 +90,7 @@ class AutoRouterTestForFootball {
             ),
             emptyMap(),
             mapOf(
-                "player" to Player(19, "Luís Falcão", "Avançado").toString()
+                "number" to "19", "name" to "Luís Falcão", "position" to "Avançado")
             )
         )
         assertEquals(
