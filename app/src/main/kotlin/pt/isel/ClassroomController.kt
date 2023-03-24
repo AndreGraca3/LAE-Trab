@@ -6,7 +6,6 @@ import pt.isel.autorouter.annotations.ArQuery
 import pt.isel.autorouter.annotations.ArRoute
 import pt.isel.autorouter.annotations.AutoRoute
 import java.util.*
-
 class ClassroomController {
 
     val repo = mutableMapOf(

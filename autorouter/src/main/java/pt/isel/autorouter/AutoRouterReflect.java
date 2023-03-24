@@ -83,8 +83,43 @@ public class AutoRouterReflect {
         return type.getDeclaredConstructor().newInstance(args);
     }
 
-    private static Object parseObject(Class clazz, String value) { // converts any string to an object.
-        if(Integer.class == clazz) return Integer.parseInt(value);
-        else return value;
+
+    private static Object parseObject(Class<?> clazz, String value) throws IllegalArgumentException {
+        if (clazz.isPrimitive()) {
+            switch (clazz.getName()) {
+                case "int" -> {
+                    return Integer.parseInt(value);
+                }
+                case "long" -> {
+                    return Long.parseLong(value);
+                }
+                case "float" -> {
+                    return Float.parseFloat(value);
+                }
+                case "double" -> {
+                    return Double.parseDouble(value);
+                }
+                case "short" -> {
+                    return Short.parseShort(value);
+                }
+                case "byte" -> {
+                    return Byte.parseByte(value);
+                }
+                case "boolean" -> {
+                    return Boolean.parseBoolean(value);
+                }
+                case "char" -> {
+                    if (value.length() != 1) {
+                        throw new IllegalArgumentException("Cannot convert \"" + value + "\" to char.");
+                    }
+                    return value.charAt(0);
+                }
+                default -> throw new IllegalArgumentException("Invalid primitive type: " + clazz.getName());
+            }
+        } else if (clazz == String.class) {
+            return value;
+        }
+        throw new IllegalArgumentException("Cannot convert to non-primitive/non-String type: " + clazz.getName());
     }
+
 }
