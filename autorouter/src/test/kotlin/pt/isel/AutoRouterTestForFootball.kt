@@ -40,7 +40,7 @@ class AutoRouterTestForFootball {
                 Player(27, "Rafa", "Avançado"),
                 Player(20, "João Mário", "Médio"),
                 Player(66, "António Silva", "Defesa"),
-                Player(6, "Pah", "Defesa")
+                Player(6, "Bah", "Defesa")
             ),
             res.get() as List<Player>
         )
@@ -82,7 +82,7 @@ class AutoRouterTestForFootball {
         )
     }
 
-    fun add_Player(routes: List<ArHttpRoute>) {
+    private fun add_Player(routes: List<ArHttpRoute>) {
         val r = routes.first { it.path == "/teams/{team}/player/{number}" && it.method == ArVerb.PUT }
         val res = r.handler.handle(
             mapOf(

@@ -1,4 +1,4 @@
-package pt.isel.autorouter;
+package pt.isel.autorouter.utils;
 
 public class Either<T> {
     private final T value;

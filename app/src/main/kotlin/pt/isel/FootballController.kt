@@ -31,7 +31,7 @@ class FootballController {
      */
     @Synchronized
     @AutoRoute(path = "/teams/{team}")
-    fun searchPlayer(@ArRoute team : String,@ArQuery player : String?): Optional<List<Player>>{
+    fun searchPlayer(@ArRoute team : String, @ArQuery player : String?): Optional<List<Player>>{
         if(teams[team] == null) return Optional.empty()
         if(player == null) return Optional.of(teams[team]!!)
         return Optional.of(teams[team]!!.filter { it.name.contains(player) })
@@ -44,7 +44,7 @@ class FootballController {
      */
     @Synchronized
     @AutoRoute(path = "/teams/{team}/player/{number}", method = ArVerb.PUT)
-    fun addPlayer(@ArRoute team : String,@ArRoute number : Int,@ArBody player : Player) : Optional<Player> {
+    fun addPlayer(@ArRoute team : String, @ArRoute number : Int, @ArBody player : Player) : Optional<Player> {
         if(number != player.number || teams[team] == null) return Optional.empty()
         teams[team] = teams[team]!!.filter{ it.number != number} + player
         return Optional.of(player)
@@ -52,7 +52,7 @@ class FootballController {
 
     @Synchronized
     @AutoRoute(path = "/teams/{team}/player/{number}", method = ArVerb.DELETE)
-    fun removePlayer(team : String, number : Int) : Optional<Player> {
+    fun removePlayer(@ArRoute team : String, @ArRoute number : Int) : Optional<Player> {
         if(teams[team] == null || teams[team]?.filter { it.number == number } == null) return Optional.empty()
         val player = teams[team]?.firstOrNull { it.number == number } ?: return Optional.empty()
         teams[team] = teams[team]!!.filter { it.number != number}
