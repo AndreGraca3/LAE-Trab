@@ -4,10 +4,12 @@
 package pt.isel
 
 import pt.isel.autorouter.ArHttpRoute
+import pt.isel.autorouter.ArVerb
 import pt.isel.autorouter.autorouterDynamic
 import pt.isel.autorouter.autorouterReflect
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class AutoRouterTestForClassroom {
 
@@ -63,4 +65,54 @@ class AutoRouterTestForClassroom {
             res.get() as List<Student>)
     }
 
+    @Test
+    fun add_student_via_reflection() {
+        add_Student(
+            ClassroomController().autorouterReflect().toList()
+        )
+    }
+
+    private fun add_Student(routes: List<ArHttpRoute>) {
+        val r = routes.first { it.path == "/classroom/{classroom}/students/{nr}" && it.method == ArVerb.PUT }
+        val res = r.handler.handle(
+            mapOf(
+                "classroom" to "i42d",
+                "nr" to "7777"
+            ),
+            emptyMap(),
+            mapOf(
+                "nr" to "7777",
+                "name" to "Ze Gato",
+                "group" to "11",
+                "semester" to "3"
+            )
+        )
+        assertEquals(
+            Student(7777,"Ze Gato",11,3),
+            res.get() as Student
+        )
+    }
+
+    @Test
+    fun delete_player_via_reflection() {
+        delete_student(
+            ClassroomController().autorouterReflect().toList()
+        )
+    }
+
+    private fun delete_student(routes: List<ArHttpRoute>) {
+        val r = routes.first{ it.path == "/classroom/{classroom}/students/{nr}" && it.method == ArVerb.DELETE}
+        val res = r.handler.handle(
+            mapOf(
+                "classroom" to "i42d",
+                "nr" to "4536"
+            ),
+            emptyMap(),
+            emptyMap()
+        )
+        assertEquals(
+            Student(4536, "Isel Maior", 7, 5),
+            res.get()
+        )
+    }
 }

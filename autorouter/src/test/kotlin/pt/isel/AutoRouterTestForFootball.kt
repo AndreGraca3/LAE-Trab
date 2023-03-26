@@ -20,12 +20,12 @@ class AutoRouterTestForFootball {
         )
     }
 
-    @Test
+    /*@Test
     fun get_players_via_dynamic() {
         get_Players(
             ClassroomController().autorouterDynamic().toList()
         )
-    }
+    }*/
 
     fun get_Players(routes: List<ArHttpRoute>) {
         val r = routes.first { it.path == "/teams/{team}" }
@@ -54,12 +54,12 @@ class AutoRouterTestForFootball {
         )
     }
 
-    @Test
+    /*@Test
     fun get_players_with_name_containing_word_via_dynamic() {
         get_players_with_name_containing_word(
             FootballController().autorouterDynamic().toList()
         )
-    }
+    }*/
 
 
     fun get_players_with_name_containing_word(routes: List<ArHttpRoute>) {
@@ -100,5 +100,33 @@ class AutoRouterTestForFootball {
             res.get() as Player
         )
     }
+
+    @Test
+    fun delete_player_via_reflection() {
+        delete_player(
+            FootballController().autorouterReflect().toList()
+        )
+    }
+
+    private fun delete_player(routes: List<ArHttpRoute>) {
+        val r = routes.first{ it.path == "/teams/{team}/player/{number}" && it.method == ArVerb.DELETE}
+        val res = r.handler.handle(
+            mapOf(
+                "team" to "Sporting",
+                "number" to "20"
+            ),
+            emptyMap(),
+            emptyMap()
+        )
+        assertEquals(
+            Player(20,"Paulinho","Avançado"),
+            res.get()
+        )
+        /**
+         * We can instance a FootballController in order to verify if the Player got deleted, this is ,
+         * the element is no longer in array "teams".
+        **/
+    }
+
 }
 

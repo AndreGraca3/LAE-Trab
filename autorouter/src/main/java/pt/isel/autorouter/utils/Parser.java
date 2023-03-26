@@ -12,7 +12,7 @@ public class Parser {
 
         if (type.isPrimitive() || type == String.class) return parseObject(type, args.get(name)); // "19" => 19
 
-        /** From this point we know it is a complex Object */
+        /** From this point we know it is a complex Object **/
         if (type.getConstructors().length != 1) throw new NoSuchMethodException();
 
         // Get Constructor's parameters' types

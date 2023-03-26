@@ -50,6 +50,10 @@ class FootballController {
         return Optional.of(player)
     }
 
+    /**
+     * Example:
+     *  http://localhost:4000/teams/Sporting/player/20
+     */
     @Synchronized
     @AutoRoute(path = "/teams/{team}/player/{number}", method = ArVerb.DELETE)
     fun removePlayer(@ArRoute team : String, @ArRoute number : Int) : Optional<Player> {
