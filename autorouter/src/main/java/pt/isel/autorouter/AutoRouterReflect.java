@@ -34,9 +34,10 @@ public class AutoRouterReflect {
 
             // map tells where to get params from according to annotation
             final Map<Class<?>, Map<String, String>> annotationsMap = Map.of(
-                    ArRoute.class, routeArgs,
-                    ArQuery.class, queryArgs,
-                    ArBody.class, bodyArgs);
+                    ArRoute.class, routeArgs == null ? Collections.emptyMap() : routeArgs,
+                    ArQuery.class, queryArgs == null ? Collections.emptyMap() : queryArgs,
+                    ArBody.class, bodyArgs == null ? Collections.emptyMap() : bodyArgs);
+
 
             Stream<Object> args = Arrays.stream(method.getParameters())     //Stream of args for method invoke
                     .map(p -> {
