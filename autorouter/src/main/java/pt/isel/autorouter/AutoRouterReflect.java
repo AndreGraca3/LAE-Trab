@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -33,16 +34,18 @@ public class AutoRouterReflect {
 
         Parameter[] params = method.getParameters();
 
-        //Array with each param annotation
-        Class<?>[] paramsAnnotations = Arrays.stream(params).map(
-                p -> findAnnotation(p, ArRoute.class, ArQuery.class, ArBody.class)
-        ).toArray(Class[]::new);
+        // List with each parameter and its annotation
+        List<MyParameter> myParams = Arrays.stream(params).map(p -> {
+            Class<?> paramType = p.getType();
+            String paramName = p.getName();
+            Class<?> paramAnnotation = findAnnotation(p, ArRoute.class, ArQuery.class, ArBody.class);
+            return new MyParameter(p, paramType, paramName, paramAnnotation);
+        }).toList();
 
         Map<Class<?>, Map<String, String>> annotationsMap = new HashMap<>(Map.of(
                 ArRoute.class, new HashMap<>(),
                 ArQuery.class, new HashMap<>(),
                 ArBody.class, new HashMap<>()));
-
 
         ArHttpHandler handler = (routeArgs, queryArgs, bodyArgs) -> {
 
@@ -51,18 +54,15 @@ public class AutoRouterReflect {
             annotationsMap.put(ArBody.class, bodyArgs);
 
             //for each param, get its annotation and use it to get param value from corresponding map
-            IntStream range = IntStream.range(0, params.length);
-            Stream<Object> args = range
-                    .mapToObj(i -> {
-                        Parameter param = params[i];
-                        String pName = param.getName();
-                        Class<?> pType = param.getType();
-                        try {
-                            return Parser.parse(pName, pType, annotationsMap.get(paramsAnnotations[i]));
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+            Stream<Object> args = myParams.stream().map(param -> {
+                String pName = param.getParamName();
+                Class<?> pType = param.getParamType();
+                try {
+                    return Parser.parse(pName, pType, annotationsMap.get(param.getParamAnnotation()));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
             try {
                 return (Optional<?>) method.invoke(controller, args.toArray());  // Handler invokes the method and returns its results
             } catch (Exception e) {
@@ -71,6 +71,7 @@ public class AutoRouterReflect {
         };
         return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler);
     }
+
 
     private static Class<?> findAnnotation(Parameter p, Class<?>... annotations) {
         return Arrays.stream(annotations).filter(
