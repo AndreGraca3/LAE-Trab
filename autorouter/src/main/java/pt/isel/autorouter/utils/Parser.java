@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Parser {
 
@@ -40,29 +41,19 @@ public class Parser {
         if (!clazz.isPrimitive())
             throw new IllegalArgumentException("Cannot convert non-primitive type: " + cName);
 
-        switch (cName) {
-            case "int", "long", "float", "double", "short", "byte", "boolean" -> {
-                return getParserMethod(clazz).invoke(null, value);
-            }
-            case "char" -> {
-                if (value.length() != 1)
-                    throw new IllegalArgumentException("Cannot convert \"" + value + "\" to char.");
-                return value.charAt(0);
-            }
-            default -> throw new IllegalArgumentException("Invalid primitive type: " + cName);
-        }
+        return primitiveToWrapper.get(clazz).apply(value);
     }
 
-    private static Method getParserMethod(Class<?> clazz) {
-        return Arrays.stream(primitiveToWrapper.get(clazz).getMethods()).filter(it -> it.getName().toLowerCase().equals("parse" + clazz.getName()) && it.getParameterTypes().length == 1).toArray(Method[]::new)[0];
-    }
+        /*private static Method getParserMethod (Class < ? > clazz){
+            return Arrays.stream(primitiveToWrapper.get(clazz).getMethods()).filter(it -> it.getName().toLowerCase().equals("parse" + clazz.getName()) && it.getParameterTypes().length == 1).toArray(Method[]::new)[0];
+        }*/
 
-    private static final Map<Class<?>, Class<?>> primitiveToWrapper = Map.of(
-            int.class, Integer.class,
-            long.class, Long.class,
-            float.class, Float.class,
-            double.class, Double.class,
-            short.class, Short.class,
-            byte.class, Byte.class,
-            boolean.class, Boolean.class);
-}
+        private static final Map<Class<?>, Function<String, Object>> primitiveToWrapper = Map.of(
+                int.class, Integer::parseInt,
+                long.class, Long::parseLong,
+                float.class, Float::parseFloat,
+                double.class, Double::parseDouble,
+                short.class, Short::parseShort,
+                byte.class, Byte::parseByte,
+                boolean.class, Boolean::parseBoolean);
+    }

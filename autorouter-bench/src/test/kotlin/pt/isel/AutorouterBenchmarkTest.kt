@@ -101,4 +101,5 @@ class AutorouterBenchmarkTest {
             optional.get() as List<Student>
         )
     }
+
 }

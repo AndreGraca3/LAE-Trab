@@ -29,7 +29,6 @@ public class AutoRouterReflect {
                 .map(m -> createArHttpRoute(controller, m.getAnnotation(AutoRoute.class), m));
     }
 
-
     private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
 
         Parameter[] params = method.getParameters();
@@ -44,23 +43,16 @@ public class AutoRouterReflect {
                 ArQuery.class, new HashMap<>(),
                 ArBody.class, new HashMap<>()));
 
+
         ArHttpHandler handler = (routeArgs, queryArgs, bodyArgs) -> {
 
             annotationsMap.put(ArRoute.class, routeArgs);
             annotationsMap.put(ArQuery.class, queryArgs);
             annotationsMap.put(ArBody.class, bodyArgs);
-//            if (routeArgs != null) {
-//                annotationsMap.put(ArRoute.class, routeArgs);
-//            }
-//            if (queryArgs != null) {
-//                annotationsMap.put(ArQuery.class, queryArgs);
-//            }
-//            if (bodyArgs != null) {
-//                annotationsMap.put(ArBody.class, bodyArgs);
-//            }
 
             //for each param, get its annotation and use it to get param value from corresponding map
-            Stream<Object> args = IntStream.range(0, params.length)
+            IntStream range = IntStream.range(0, params.length);
+            Stream<Object> args = range
                     .mapToObj(i -> {
                         Parameter param = params[i];
                         String pName = param.getName();
