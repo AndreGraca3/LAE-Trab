@@ -46,15 +46,18 @@ public class AutoRouterReflect {
 
         ArHttpHandler handler = (routeArgs, queryArgs, bodyArgs) -> {
 
-            if (routeArgs != null) {
-                annotationsMap.put(ArRoute.class, routeArgs);
-            }
-            if (queryArgs != null) {
-                annotationsMap.put(ArQuery.class, queryArgs);
-            }
-            if (bodyArgs != null) {
-                annotationsMap.put(ArBody.class, bodyArgs);
-            }
+            annotationsMap.put(ArRoute.class, routeArgs);
+            annotationsMap.put(ArQuery.class, queryArgs);
+            annotationsMap.put(ArBody.class, bodyArgs);
+//            if (routeArgs != null) {
+//                annotationsMap.put(ArRoute.class, routeArgs);
+//            }
+//            if (queryArgs != null) {
+//                annotationsMap.put(ArQuery.class, queryArgs);
+//            }
+//            if (bodyArgs != null) {
+//                annotationsMap.put(ArBody.class, bodyArgs);
+//            }
 
             //for each param, get its annotation and use it to get param value from corresponding map
             Stream<Object> args = IntStream.range(0, params.length)

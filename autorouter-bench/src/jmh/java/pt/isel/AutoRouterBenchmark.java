@@ -1,5 +1,6 @@
 package pt.isel;
 
+import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 @State(Scope.Benchmark)
 public class AutoRouterBenchmark {
 
-    @Param({"baseline", "reflect", "dynamic"}) String approach;
+    @Param({"baseline", "reflect", /*"dynamic"*/}) String approach;
     @Param({"empty", "classroom"}) String domain;
 
     ArHttpRoute addStudentHandler;
@@ -34,7 +35,7 @@ public class AutoRouterBenchmark {
         Object controller = domain.equals("empty") ? new ClassroomControllerEmpty() : new ClassroomController();
         return switch (approach) {
             case "reflect" -> new AutoRouterReflect().autorouterReflect(controller);
-            case "dynamic" -> new AutoRouterDynamic().autorouterDynamic(controller);
+            //case "dynamic" -> new AutoRouterDynamic().autorouterDynamic(controller);
             case "baseline" -> domain.equals("empty")
                     ? ClassroomBaselineHandlers.routes(new ClassroomControllerEmpty())
                     : ClassroomBaselineHandlers.routes(new ClassroomController());
@@ -54,7 +55,7 @@ public class AutoRouterBenchmark {
         return addStudentHandler.handler().handle(
                 Map.of("classroom", "i42d", "nr", "7646775"),
                 Collections.emptyMap(),
-                Map.of("name", "Ze Gato", "group", "11","semester", "3")
+                Map.of("nr", "7646775", "name", "Ze Gato", "group", "11","semester", "3")
         );
     }
     @Benchmark

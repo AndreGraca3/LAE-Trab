@@ -13,16 +13,16 @@ class AutorouterBenchmarkTest {
     private val dynamicRoutes = AutoRouterDynamic.autorouterDynamic(classrooom).toList()
     private val reflectRoutes = AutoRouterReflect.autorouterReflect(classrooom).toList()
 
-    private var addStudentDynamic =
-        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "addStudent" }
+//    private var addStudentDynamic =
+//        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "addStudent" }
     private var addStudentReflect =
         reflectRoutes.first { r: ArHttpRoute -> r.funName == "addStudent" }
-    private var removeDynamic =
-        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "removeStudent" }
+//    private var removeDynamic =
+//        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "removeStudent" }
     private var removeReflect =
         reflectRoutes.first { r: ArHttpRoute -> r.funName == "removeStudent" }
-    private var searchDynamic =
-        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "search" }
+//    private var searchDynamic =
+//        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "search" }
     private var searchReflect =
         reflectRoutes.first { r: ArHttpRoute -> r.funName == "search" }
 
@@ -44,7 +44,7 @@ class AutorouterBenchmarkTest {
         val optional = addStudentReflect.handler.handle(
             mapOf("classroom" to "i42d", "nr" to "7646775"),
             emptyMap<String, String>(),
-            mapOf("name" to "Ze Gato", "group" to "11", "semester" to "3")
+            mapOf("nr" to "7646775", "name" to "Ze Gato", "group" to "11", "semester" to "3")
         )
         assertEquals(
             Student(7646775, "Ze Gato", 11, 3),

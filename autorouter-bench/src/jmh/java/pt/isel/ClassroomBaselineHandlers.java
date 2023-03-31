@@ -31,10 +31,10 @@ public class ClassroomBaselineHandlers {
                                 routeArgs.get("classroom"),
                                 nr,
                                 new Student(
-                                        nr,
+                                        parseInt(bodyArgs.get("nr")),
                                         bodyArgs.get("name"),
-                                    parseInt(bodyArgs.get("group")),
-                                    parseInt(bodyArgs.get("semester"))));
+                                        parseInt(bodyArgs.get("group")),
+                                        parseInt(bodyArgs.get("semester"))));
                     }
                 }
                 ),
@@ -67,10 +67,10 @@ public class ClassroomBaselineHandlers {
                                 routeArgs.get("classroom"),
                                 nr,
                                 new Student(
-                                    nr,
-                                    bodyArgs.get("name"),
-                                    parseInt(bodyArgs.get("group")),
-                                    parseInt(bodyArgs.get("semester"))));
+                                        parseInt(bodyArgs.get("nr")),
+                                        bodyArgs.get("name"),
+                                        parseInt(bodyArgs.get("group")),
+                                        parseInt(bodyArgs.get("semester"))));
                     }
                 }
                 ),
