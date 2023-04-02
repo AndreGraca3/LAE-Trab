@@ -7,14 +7,12 @@ import pt.isel.autorouter.annotations.AutoRoute;
 import pt.isel.autorouter.utils.Parser;
 
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.security.InvalidParameterException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static pt.isel.autorouter.MyParameter.getParameterInfo;
 
 
 public class AutoRouterReflect {
@@ -35,12 +33,9 @@ public class AutoRouterReflect {
         Parameter[] params = method.getParameters();
 
         // List with each parameter and its annotation
-        List<MyParameter> myParams = Arrays.stream(params).map(p -> {
-            Class<?> paramType = p.getType();
-            String paramName = p.getName();
-            Class<?> paramAnnotation = findAnnotation(p, ArRoute.class, ArQuery.class, ArBody.class);
-            return new MyParameter(p, paramType, paramName, paramAnnotation);
-        }).toList();
+        List<MyParameter> myParams = Arrays.stream(params).map(p ->
+                getParameterInfo(p, ArRoute.class, ArQuery.class, ArBody.class)
+        ).toList();
 
         Map<Class<?>, Map<String, String>> annotationsMap = new HashMap<>(Map.of(
                 ArRoute.class, new HashMap<>(),
@@ -55,10 +50,10 @@ public class AutoRouterReflect {
 
             //for each param, get its annotation and use it to get param value from corresponding map
             Stream<Object> args = myParams.stream().map(param -> {
-                String pName = param.getParamName();
-                Class<?> pType = param.getParamType();
+                String pName = param.paramName();
+                Class<?> pType = param.paramType();
                 try {
-                    return Parser.parse(pName, pType, annotationsMap.get(param.getParamAnnotation()));
+                    return Parser.parse(pName, pType, annotationsMap.get(param.paramAnnotation()));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -70,12 +65,5 @@ public class AutoRouterReflect {
             }
         };
         return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler);
-    }
-
-
-    private static Class<?> findAnnotation(Parameter p, Class<?>... annotations) {
-        return Arrays.stream(annotations).filter(
-                a -> p.isAnnotationPresent((Class<? extends Annotation>) a)
-        ).findFirst().orElseThrow(() -> new InvalidParameterException("Missing Annotation in Parameter: " + p.getName()));
     }
 }

@@ -1,15 +1,13 @@
 package pt.isel.autorouter.utils;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class Parser {
 
-    public static <T> Object parse(String name, Class<?> type, Map<String, String> args) throws Exception {
+    public static Object parse(String name, Class<?> type, Map<String, String> args) throws Exception {
 
         if (type.isPrimitive() || type == String.class) return parseObject(type, args.get(name)); // "19" => 19
 
@@ -33,7 +31,7 @@ public class Parser {
     }
 
 
-    private static Object parseObject(Class<?> clazz, String value) throws Exception {
+    private static Object parseObject(Class<?> clazz, String value) {
         String cName = clazz.getName();
 
         if (clazz == String.class) return value;
@@ -44,7 +42,7 @@ public class Parser {
         return primitiveToWrapper.get(clazz).apply(value);
     }
 
-        /*private static Method getParserMethod (Class < ? > clazz){
+        /*private static Method getParserMethod (Class < ? > clazz){    // reflection = pretty != performance
             return Arrays.stream(primitiveToWrapper.get(clazz).getMethods()).filter(it -> it.getName().toLowerCase().equals("parse" + clazz.getName()) && it.getParameterTypes().length == 1).toArray(Method[]::new)[0];
         }*/
 

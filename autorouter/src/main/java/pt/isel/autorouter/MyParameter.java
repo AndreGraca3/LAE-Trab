@@ -1,33 +1,19 @@
 package pt.isel.autorouter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
+import java.security.InvalidParameterException;
+import java.util.Arrays;
 
-public class MyParameter {
-    private final Parameter param;
-    private final Class<?> paramType;
-    private final String paramName;
-    private final Class<?> paramAnnotation;
+public record MyParameter(Parameter param, Class<?> paramType, String paramName, Class<?> paramAnnotation) {
 
-    public MyParameter(Parameter param, Class<?> paramType, String paramName, Class<?> paramAnnotation) {
-        this.param = param;
-        this.paramType = paramType;
-        this.paramName = paramName;
-        this.paramAnnotation = paramAnnotation;
+    static MyParameter getParameterInfo(Parameter p, Class<?>... annotations) {
+        return new MyParameter(p, p.getType(), p.getName(), findAnnotation(p, annotations));
     }
 
-    public Parameter getParam() {
-        return param;
-    }
-
-    public Class<?> getParamType() {
-        return paramType;
-    }
-
-    public String getParamName() {
-        return paramName;
-    }
-
-    public Class<?> getParamAnnotation() {
-        return paramAnnotation;
+    private static Class<?> findAnnotation(Parameter p, Class<?>... annotations) {
+        return Arrays.stream(annotations).filter(
+                a -> p.isAnnotationPresent((Class<? extends Annotation>) a)
+        ).findFirst().orElseThrow(() -> new InvalidParameterException("Missing Annotation in Parameter: " + p.getName()));
     }
 }
