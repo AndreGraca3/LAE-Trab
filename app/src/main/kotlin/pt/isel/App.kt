@@ -1,5 +1,6 @@
 package pt.isel
 
+import pt.isel.autorouter.AutoRouterDynamic
 import pt.isel.autorouter.autorouterDynamic
 import pt.isel.autorouter.autorouterReflect
 import pt.isel.autorouter.jsonServer
