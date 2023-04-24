@@ -1,31 +1,25 @@
 package pt.isel.autorouter;
 
-import kotlin.jvm.internal.DefaultConstructorMarker;
 import org.cojen.maker.ClassMaker;
 import org.cojen.maker.FieldMaker;
 import org.cojen.maker.MethodMaker;
 import org.cojen.maker.Variable;
-import org.eclipse.jetty.util.StringUtil;
 import pt.isel.autorouter.annotations.ArBody;
 import pt.isel.autorouter.annotations.ArQuery;
 import pt.isel.autorouter.annotations.ArRoute;
 import pt.isel.autorouter.annotations.AutoRoute;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.lang.Character.*;
 
 public class AutoRouterDynamic {
 
 
-    private static Map<Class<?>, Integer> mapIndex = new HashMap<>(Map.of(
+    private static final Map<Class<?>, Integer> mapIndex = new HashMap<>(Map.of(
             ArRoute.class, 0,
             ArQuery.class, 1,
             ArBody.class, 2));
@@ -76,28 +70,62 @@ public class AutoRouterDynamic {
         MethodMaker handle = cm.addMethod(Optional.class, "handle", Map.class, Map.class, Map.class)
                .public_();
 
-        //Object[] args = Stream.of(method.getParameters()).map(parameter -> buildParameterVariable(handle, parameter)).toArray();
+        Object[] args = Stream.of(method.getParameters())
+                .map(parameter -> {
+                    try {
+                        return buildParameterVariable(handle, parameter);
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).toArray();
 
-        Variable map1 = handle.param(0);
-        Variable classroomVar = map1.invoke("get", "classroom").cast(String.class);
-
-        Variable map2 = handle.param(1);
-        Variable studentVar = map2.invoke("get", "student").cast(String.class);
-
-        Variable classroom = handle.var(String.class).set(classroomVar);
-        Variable student = handle.var(String.class).set(studentVar);
-
-        Variable res = handle.field("controller").invoke(method.getName(), classroom, student);
+        Variable res = handle.field("controller").invoke(method.getName(),args);
 
         handle.return_(res);
-
-        // Get the parameters of the method
-        //Class<?>[] parameters = method.getParameterTypes();
 
         return cm;
     }
 
+    private static Variable buildParameterVariable(MethodMaker handle, Parameter parameter) throws NoSuchMethodException {
+        Class<?>[] annotations = new Class[] {ArRoute.class, ArQuery.class, ArBody.class };
+        Class<?> annotation = MyParameter.findAnnotation(parameter, annotations);
 
+        int paramIdx = mapIndex.get(annotation);
+        Class<?> parameterType = parameter.getType();
+
+        // get map value in String
+        Variable parameterValue = handle.param(paramIdx).invoke("get", parameter.getName()).cast(String.class); // "i42d"
+
+        if(parameterType == String.class) {
+            return handle.var(parameterType).set(parameterValue);
+        }
+
+        if(parameterType.isPrimitive()) {
+            Class<?> parserType = primitiveToWrapper.get(parameterType);
+            return handle.var(parserType).invoke("parse" + firstToUpper(parameterType.getName()),parameterValue);
+        }
+
+        // if type == complex
+        if(parameterType.getDeclaredConstructors().length != 1) throw new NoSuchMethodException();
+
+        Class<?>[] constructorParamTypes = Arrays.stream(parameterType.getDeclaredFields()).map(Field::getType).toArray(Class[]::new);
+
+        Stream<Variable> constructorParam = Arrays.stream(parameterType.getDeclaredConstructor(constructorParamTypes).getParameters()).map(it -> {
+            try {
+                return buildParameterVariable(handle,it); // parameterType
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return handle.var(parameterType).invoke(parameterType.getDeclaredConstructor(constructorParamTypes).getName(),constructorParam);
+    }
+
+
+    public static String firstToUpper(String parameterType) {
+        return parameterType.substring(0,1).toUpperCase() + parameterType.substring(1);
+        //return parameterType.replaceFirst("/^./", String.valueOf(parameterType.indexOf(0)));
+    }
 
 //    public class SearchClassroomControllerClass implements ArHttpHandler {
 //
@@ -112,6 +140,23 @@ public class AutoRouterDynamic {
 //            controller.search(routeArgs.get("classroom"), queryArgs.get("student"));
 //        }
 //    }
+
+
+//    public class AddStudentClassroomControllerClass implements ArHttpHandler {
+//
+//        private final ClassroomController controller;
+//
+//        public AddStudentClassroomControllerClass(ClassroomController controller) {
+//            this.controller = controller;
+//        }
+//
+//        @Override
+//        public Optional<?> handle(Map<String, String> routeArgs, Map<String, String> queryArgs, Map<String, String> bodyArgs) {
+//            controller.addStudent(routeArgs.get("classroom"), routeArgs.get("nr"), bodyArgs.get("student"));
+//        }
+//    }
+
+
 }
 
 
@@ -130,3 +175,17 @@ public class AutoRouterDynamic {
 // Add the code to call the controller method
 //        handle.var(0).invoke(method.getName(),);
 
+
+ /*Variable map1 = handle.param(0);
+        Variable classroomVar = map1.invoke("get", "classroom").cast(String.class);
+
+        Variable map2 = handle.param(1);
+        Variable studentVar = map2.invoke("get", "student").cast(String.class);
+
+        Variable classroom = handle.var(String.class).set(classroomVar);
+        Variable student = handle.var(String.class).set(studentVar);*/
+
+
+
+// Get the parameters of the method
+//Class<?>[] parameters = method.getParameterTypes();
