@@ -33,7 +33,7 @@ public class AutoRouterDynamic {
             byte.class, Byte.class,
             boolean.class, Boolean.class);
     public static Stream<ArHttpRoute> autorouterDynamic(Object controller) {
-        return Arrays.stream(controller.getClass().getDeclaredMethods())
+        return Stream.of(controller.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(AutoRoute.class))
                 .map(method -> {
                     AutoRoute autoRoute = method.getAnnotation(AutoRoute.class);

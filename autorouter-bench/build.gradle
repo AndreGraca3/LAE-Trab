@@ -12,7 +12,7 @@ plugins {
 
     // This plugin integrates the JMH micro-benchmarking framework with Gradle.
     id 'java-library'
-    id "me.champeau.jmh" version "0.6.6"
+    id "me.champeau.jmh" version "0.6.8"
 }
 
 tasks.compileKotlin {
@@ -44,6 +44,8 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+
+    jmhAnnotationProcessor "org.openjdk.jmh:jmh-generator-annprocess:1.36"
 }
 
 jmh {
