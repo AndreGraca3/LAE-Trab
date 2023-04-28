@@ -24,8 +24,8 @@ class JsonServerTestForClassroom {
 
 
     fun makeJsonServer(): Stream<JsonServer> = Stream.of(
-        ClassroomController().autorouterReflect().jsonServer(),
-        //ClassroomController().autorouterDynamic().jsonServer(),
+        // ClassroomController().autorouterReflect().jsonServer(),
+        ClassroomController().autorouterDynamic().jsonServer(),
     )
 
     fun setup(jsonServer: JsonServer) = runBlocking {

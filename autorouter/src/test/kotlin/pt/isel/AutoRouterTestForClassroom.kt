@@ -72,6 +72,13 @@ class AutoRouterTestForClassroom {
         )
     }
 
+    @Test
+    fun add_student_via_dynamic() {
+        add_Student(
+            ClassroomController().autorouterDynamic().toList()
+        )
+    }
+
     private fun add_Student(routes: List<ArHttpRoute>) {
         val r = routes.first { it.path == "/classroom/{classroom}/students/{nr}" && it.method == ArVerb.PUT }
         val res = r.handler.handle(
@@ -97,6 +104,13 @@ class AutoRouterTestForClassroom {
     fun delete_player_via_reflection() {
         delete_student(
             ClassroomController().autorouterReflect().toList()
+        )
+    }
+
+    @Test
+    fun delete_player_via_dynamic() {
+        delete_student(
+            ClassroomController().autorouterDynamic().toList()
         )
     }
 

@@ -6,7 +6,6 @@ import pt.isel.autorouter.annotations.ArRoute;
 import pt.isel.autorouter.annotations.AutoRoute;
 import pt.isel.autorouter.utils.Parser;
 
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -15,17 +14,15 @@ import java.util.stream.Stream;
 import static pt.isel.autorouter.MyParameter.getParameterInfo;
 
 
-public class AutoRouterReflect {
+public class AutoRouterReflect extends AutoRouter {
 
-    public static Stream<ArHttpRoute> autorouterReflect(Object controller) {
+    public AutoRouterReflect(Object controller) {
+        super(controller);
+    }
 
-        Class<?> controllerClass = controller.getClass();
-
-        Stream<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods());
-
-        // For each method check: annotated with @AutoRoute, returns Optional and create ArHttpRoute
-        return methods.filter(m -> m.isAnnotationPresent(AutoRoute.class) && m.getReturnType() == Optional.class)
-                .map(m -> createArHttpRoute(controller, m.getAnnotation(AutoRoute.class), m));
+    // For each method check: annotated with @AutoRoute, returns Optional and create ArHttpRoute
+    public Stream<ArHttpRoute> autorouterReflect() {
+        return controllerMethods.map(m -> createArHttpRoute(controller, m.getAnnotation(AutoRoute.class), m));
     }
 
     private static ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) {
@@ -50,10 +47,10 @@ public class AutoRouterReflect {
 
             //for each param, get its annotation and use it to get param value from corresponding map
             Stream<Object> args = myParams.stream().map(param -> {
-                String pName = param.paramName();
-                Class<?> pType = param.paramType();
+                String pName = param.name();
+                Class<?> pType = param.type();
                 try {
-                    return Parser.parse(pName, pType, annotationsMap.get(param.paramAnnotation()));
+                    return Parser.parse(pName, pType, annotationsMap.get(param.annotation()));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

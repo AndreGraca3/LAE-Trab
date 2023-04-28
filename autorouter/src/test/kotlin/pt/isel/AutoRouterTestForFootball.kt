@@ -20,12 +20,12 @@ class AutoRouterTestForFootball {
         )
     }
 
-    /*@Test
+    @Test
     fun get_players_via_dynamic() {
         get_Players(
-            ClassroomController().autorouterDynamic().toList()
+            FootballController().autorouterDynamic().toList()
         )
-    }*/
+    }
 
     fun get_Players(routes: List<ArHttpRoute>) {
         val r = routes.first { it.path == "/teams/{team}" }
@@ -54,12 +54,12 @@ class AutoRouterTestForFootball {
         )
     }
 
-    /*@Test
+    @Test
     fun get_players_with_name_containing_word_via_dynamic() {
         get_players_with_name_containing_word(
             FootballController().autorouterDynamic().toList()
         )
-    }*/
+    }
 
 
     fun get_players_with_name_containing_word(routes: List<ArHttpRoute>) {
@@ -79,6 +79,13 @@ class AutoRouterTestForFootball {
     fun add_player_via_reflection() {
         add_Player(
             FootballController().autorouterReflect().toList()
+        )
+    }
+
+    @Test
+    fun add_player_via_dynamic() {
+        add_Player(
+            FootballController().autorouterDynamic().toList()
         )
     }
 
@@ -105,6 +112,13 @@ class AutoRouterTestForFootball {
     fun delete_player_via_reflection() {
         delete_player(
             FootballController().autorouterReflect().toList()
+        )
+    }
+
+    @Test
+    fun delete_player_via_dynamic() {
+        delete_player(
+            FootballController().autorouterDynamic().toList()
         )
     }
 

@@ -1,6 +1,5 @@
 package pt.isel;
 
-import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -34,8 +33,8 @@ public class AutoRouterBenchmark {
     Stream<ArHttpRoute> routes() {
         Object controller = domain.equals("empty") ? new ClassroomControllerEmpty() : new ClassroomController();
         return switch (approach) {
-            case "reflect" -> new AutoRouterReflect().autorouterReflect(controller);
-            //case "dynamic" -> new AutoRouterDynamic().autorouterDynamic(controller);
+            case "reflect" -> new AutoRouterReflect(controller).autorouterReflect();
+            case "dynamic" -> new AutoRouterDynamic(controller).autorouterDynamic();
             case "baseline" -> domain.equals("empty")
                     ? ClassroomBaselineHandlers.routes(new ClassroomControllerEmpty())
                     : ClassroomBaselineHandlers.routes(new ClassroomController());
