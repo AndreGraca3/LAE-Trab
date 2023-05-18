@@ -4,14 +4,15 @@ import org.junit.Test
 import pt.isel.autorouter.ArHttpRoute
 import pt.isel.autorouter.AutoRouterDynamic
 import pt.isel.autorouter.AutoRouterReflect
+import pt.isel.models.Student
 import java.util.Map
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class AutorouterBenchmarkTest {
     private val classrooom = ClassroomControllerEmpty()
-    private val dynamicRoutes = AutoRouterDynamic.autorouterDynamic(classrooom).toList()
-    private val reflectRoutes = AutoRouterReflect.autorouterReflect(classrooom).toList()
+    private val dynamicRoutes = AutoRouterDynamic(classrooom).autorouterDynamic().toList()
+    private val reflectRoutes = AutoRouterReflect(classrooom).autorouterReflect().toList()
 
 //    private var addStudentDynamic =
 //        dynamicRoutes.first { r: ArHttpRoute -> r.funName == "addStudent" }

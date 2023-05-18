@@ -1,5 +1,6 @@
-package pt.isel
+package pt.isel.controllers
 
+import pt.isel.models.Student
 import pt.isel.autorouter.ArVerb
 import pt.isel.autorouter.annotations.ArBody
 import pt.isel.autorouter.annotations.ArQuery

@@ -3,10 +3,12 @@
  */
 package pt.isel
 
+import pt.isel.controllers.ClassroomController
 import pt.isel.autorouter.ArHttpRoute
 import pt.isel.autorouter.ArVerb
 import pt.isel.autorouter.autorouterDynamic
 import pt.isel.autorouter.autorouterReflect
+import pt.isel.models.Student
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

@@ -6,7 +6,9 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import pt.isel.controllers.ClassroomController
 import pt.isel.autorouter.*
+import pt.isel.models.Student
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
