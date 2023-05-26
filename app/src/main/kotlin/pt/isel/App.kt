@@ -9,10 +9,16 @@ fun main() {
 
     val path = File("watched").toPath()
     val sequence = path.watchNewFilesContent()
-    sequence.forEach {
-        val iterator = it.iterator()
-        while (iterator.hasNext()) {
-            println(iterator.next())
+//    sequence.forEach {
+//        val iterator = it.iterator()
+//        while (iterator.hasNext()) {
+//            println(iterator.next())
+//        }
+//    }
+    for (seq in sequence){
+        for (line in seq){
+            println(line)
         }
     }
+
 }
