@@ -23,7 +23,7 @@ fun Path.watchNewFilesContent(): Sequence<Sequence<String>> {
                         ENTRY_CREATE, ENTRY_MODIFY -> {
                             val fileName = watchEvent.context().toString()
                             val filePath = this@watchNewFilesContent.resolve(fileName)
-                            val lines = filePath.readLines() + watchEvent.kind().toString()
+                            val lines = filePath.readLines() //+ watchEvent.kind().toString()
 
                            yield(lines.asSequence())
                         }
