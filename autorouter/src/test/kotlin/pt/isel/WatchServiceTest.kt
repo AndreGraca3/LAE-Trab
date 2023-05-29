@@ -1,74 +1,50 @@
 package pt.isel
 
-import org.junit.jupiter.api.Test
 import pt.isel.autorouter.watchNewFilesContent
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
 import kotlin.concurrent.thread
-import kotlin.test.BeforeTest
 import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 class WatchServiceTest {
 
-    private val usersDir = System.getProperty("user.dir")
-    private val path = Paths.get(usersDir, "watched")
+    private val folder = "../watched"
+    private val directory = File(folder)
+    private val file = File("$folder/test.txt")
 
     @BeforeTest
     fun setup() {
-        // Create the directory if it doesn't exist
-        val directory = File(path.toString())
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
+        if (!directory.exists()) directory.mkdirs()
+        if (file.exists()) file.delete()
+        file.writeText("")
+    }
+
+    @AfterTest
+    fun deleteTestFile() {
+        if (file.exists()) file.delete()
     }
 
     @Test
     fun `test create and modify file`() {
-        // Create the directory if it doesn't exist
-        val directory = File(path.toString())
-
-        val file = File(directory, "myFile.txt")
-
-        val filePath = file.toPath()
+        val path = directory.toPath()
 
         // Watch for new files and modifications
         val sequences = path.watchNewFilesContent()
 
-        // create the file with no content
-        Files.write(filePath, "".toByteArray())
-
-        // modify the file 1st time
-        thread {
-            Thread.sleep(1000)
-            val content = "This is the content of my file."
-            Files.write(filePath, content.toByteArray())
+        repeat(2) {
+            thread {
+                Thread.sleep(1000 + (it * 1000).toLong())
+                val content = "Modifying\n this file\n for ${it + 1} time."
+                file.writeText(content)
+            }
         }
 
-        // Assert that at least one sequence of lines is received
-        val firstSequence = sequences.take(1)
-        assertEquals(1, firstSequence.count())
-
-        // Modify the file 2nd time
-        thread {
-            Thread.sleep(1000)
-            val modifiedContent = "Modified content"
-            Files.write(filePath, modifiedContent.toByteArray())
-        }
-
-        // Assert that another sequence of lines is received
-        val secondSequence = sequences.take(2)
-        assertEquals(2, secondSequence.count())
+        // Assert that we get 2 fileSequences inside sequences
+        val firstSeq: Sequence<String> = sequences.take(1).first()
+        assertEquals(3, firstSeq.count())
+        val secSeq: Sequence<String> = sequences.drop(1).first()
+        assertEquals(3, secSeq.count())
     }
-
-    @AfterTest
-    fun teardown() {
-        // Delete the directory
-        val directory = File(path.toString())
-        if (directory.exists()) {
-            directory.deleteRecursively()
-        }
-    }
-
 }

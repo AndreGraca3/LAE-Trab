@@ -42,7 +42,7 @@ The `autorouterReflect` can be use in Kotlin through a statement such as:
 ClassroomRouter().autorouterReflect().jsonServer().start(4000)
 ```
 
-<img src="handlers-for-classroom-router.png">
+<img src="docs/images/handlers-for-classroom-router.png">
 
 #### ClassroomController example
 
@@ -96,7 +96,7 @@ Implement the Java function `Stream<ArHttpRoute> autorouterDynamic(Object contro
 a stream of [`ArHttpRoute`](autorouter/src/main/java/pt/isel/autorouter/ArHttpRoute.java)
 objects for each eligible method in given `controller` object parameter.
 
-<img src="dynamic-handlers-for-classroom-router.png">
+<img src="docs/images/dynamic-handlers-for-classroom-router.png">
 
 ## Usage
 
