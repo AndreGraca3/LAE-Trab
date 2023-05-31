@@ -6,17 +6,13 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
 import org.jetbrains.annotations.NotNull;
-import pt.isel.autorouter.annotations.ArSequenceResponse;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
-import static pt.isel.autorouter.WatchServiceKt.watchNewFilesContent;
 
 public class JsonServer implements AutoCloseable {
 
@@ -52,10 +48,10 @@ public class JsonServer implements AutoCloseable {
             var bodyArgs = ctx.body().isEmpty() ? null : mapper.readValue(ctx.body(), Map.class);
             var res = route.handler().handle(routeArgs, queryArgs, bodyArgs);
             if (res.isPresent()) {
-                if (route.getClass().getDeclaredMethod(route.funName()).isAnnotationPresent(ArSequenceResponse.class)) {
-                    handleSequenceResponse(ctx, res.get());
-                }else {
-                    ctx.json(res.get());
+                System.out.println("Cheguei aqui1!");
+                switch (route.returnType()) {
+                    case SEQUENCE -> handleSequenceResponse(ctx, res.get());
+                    case OBJECT -> ctx.json(res.get());
                 }
             } else {
                 // Status code 404
@@ -64,29 +60,32 @@ public class JsonServer implements AutoCloseable {
         };
     }
 
-    private static void handleSequenceResponse(Context ctx, Object sequence) throws IOException {
+    private static void handleSequenceResponse(Context ctx, Object sequence) throws Exception {
         ctx.contentType("text/html");
-        PrintWriter writer = ctx.res().getWriter();
-        Optional<?> optionalSequence = (Optional<?>) sequence;
+        //PrintWriter writer = ctx.res().getWriter();
+        Optional<?> optionalSequence =  Optional.of(sequence);
+        System.out.println("Cheguei aqui2!");
+        handleSequence(ctx, optionalSequence);
         optionalSequence.ifPresentOrElse(
-                seq -> {
-                    for (Object item : (Iterable<?>) seq) {
-                        if (item instanceof Iterable) {
-                            for (Object subItem : (Iterable<?>) item) {
-                                writer.println("<p>" + subItem.toString() + "</p>");
-                                writer.flush();
-                            }
-                        } else {
-                            writer.println("<p>" + item.toString() + "</p>");
-                            writer.flush();
-                        }
-                    }
-                },
+                seq -> handleSequence(ctx, seq),
                 () -> {
                     // Status code 404
                     throw new NotFoundResponse();
                 }
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void handleSequence(Context ctx, Object sequence) {
+        if (sequence instanceof Iterable) {
+            System.out.println("Cheguei aqui3!");
+            for (Object item : (Iterable<?>) sequence) {
+                handleSequence(ctx, item);
+            }
+        } else {
+            System.out.println("Cheguei aqui4!");
+            ctx.result("<p>" + sequence.toString() + "</p>");
+        }
     }
 
     public void start(int port) {
@@ -101,11 +100,5 @@ public class JsonServer implements AutoCloseable {
     @NotNull
     public Javalin javalin() {
         return server;
-    }
-
-    // Extension function to register a WatchService on a given Path and return a sequence of file contents
-    public JsonServer JsonWatchNewFilesContent(Path path) {
-        watchNewFilesContent(path);//.forEach(this::handleSequenceResponse);
-        return this;
     }
 }

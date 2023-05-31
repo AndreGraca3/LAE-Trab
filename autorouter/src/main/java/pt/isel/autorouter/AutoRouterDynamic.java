@@ -41,7 +41,7 @@ public class AutoRouterDynamic extends AutoRouter {
     private ArHttpRoute createArHttpRoute(Object controller, AutoRoute annotation, Method method) throws ReflectiveOperationException {
         Class<?> methodClass = buildHandler(controllerClass, method).finish();
         ArHttpHandler handler = (ArHttpHandler) methodClass.getDeclaredConstructor(controllerClass).newInstance(controller);
-        return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler);
+        return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler, annotation.returnType());
     }
 
     public static ClassMaker buildHandler(Class<?> controllerClass, Method method) {

@@ -61,6 +61,6 @@ public class AutoRouterReflect extends AutoRouter {
                 throw new RuntimeException(e);
             }
         };
-        return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler);
+        return new ArHttpRoute(method.getName(), annotation.method(), annotation.path(), handler, annotation.returnType());
     }
 }
