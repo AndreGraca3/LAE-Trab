@@ -1,4 +1,4 @@
-package pt.isel.autorouter;
+package pt.isel.autorouter.routers;
 
 import pt.isel.autorouter.annotations.AutoRoute;
 
@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 
-public class AutoRouter {
+class AutoRouter {
     Object controller;
     Class<?> controllerClass;
     Stream<Method> controllerMethods;

@@ -1,4 +1,4 @@
-package pt.isel.autorouter;
+package pt.isel.autorouter.utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public record MyParameter(Parameter param, Class<?> type, String name, Class<?> annotation) {
 
-    static MyParameter getParameterInfo(Parameter p, Class<?>... annotations) {
+    public static MyParameter getParameterInfo(Parameter p, Class<?>... annotations) {
         return new MyParameter(p, p.getType(), p.getName(), findAnnotation(p, null, annotations));
     }
 
@@ -21,7 +21,7 @@ public record MyParameter(Parameter param, Class<?> type, String name, Class<?> 
      * @return The first annotation found in the parameter or the previous annotation if no annotation is found and a
      * previous annotation is provided.
      */
-    static Class<?> findAnnotation(Parameter p, Class<?> prevAnnotation, Class<?>... annotations) {
+    public static Class<?> findAnnotation(Parameter p, Class<?> prevAnnotation, Class<?>... annotations) {
         try {
             return Arrays.stream(annotations).filter(
                     a -> p.isAnnotationPresent((Class<? extends Annotation>) a)

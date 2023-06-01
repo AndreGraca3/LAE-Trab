@@ -1,6 +1,6 @@
 package pt.isel
 
-import pt.isel.autorouter.watchNewFilesContent
+import pt.isel.watch_service.watchNewFilesContent
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.test.AfterTest

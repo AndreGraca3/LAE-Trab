@@ -1,8 +1,11 @@
-package pt.isel.autorouter;
+package pt.isel.autorouter.routers;
 
 import org.cojen.maker.ClassMaker;
 import org.cojen.maker.MethodMaker;
 import org.cojen.maker.Variable;
+import pt.isel.autorouter.ArHttpHandler;
+import pt.isel.autorouter.ArHttpRoute;
+import pt.isel.autorouter.utils.MyParameter;
 import pt.isel.autorouter.annotations.ArBody;
 import pt.isel.autorouter.annotations.ArQuery;
 import pt.isel.autorouter.annotations.ArRoute;

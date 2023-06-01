@@ -1,5 +1,8 @@
-package pt.isel.autorouter;
+package pt.isel.autorouter.routers;
 
+import pt.isel.autorouter.ArHttpHandler;
+import pt.isel.autorouter.ArHttpRoute;
+import pt.isel.autorouter.utils.MyParameter;
 import pt.isel.autorouter.annotations.ArBody;
 import pt.isel.autorouter.annotations.ArQuery;
 import pt.isel.autorouter.annotations.ArRoute;
@@ -11,7 +14,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static pt.isel.autorouter.MyParameter.getParameterInfo;
+import static pt.isel.autorouter.utils.MyParameter.getParameterInfo;
 
 
 public class AutoRouterReflect extends AutoRouter {

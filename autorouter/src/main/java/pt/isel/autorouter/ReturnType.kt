@@ -1,5 +1,5 @@
 package pt.isel.autorouter
 
-enum class returnType {
+enum class ReturnType {
     OBJECT, SEQUENCE
 }

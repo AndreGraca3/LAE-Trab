@@ -10,8 +10,8 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import pt.isel.controllers.ClassroomController;
 import pt.isel.autorouter.ArHttpRoute;
-import pt.isel.autorouter.AutoRouterDynamic;
-import pt.isel.autorouter.AutoRouterReflect;
+import pt.isel.autorouter.routers.AutoRouterDynamic;
+import pt.isel.autorouter.routers.AutoRouterReflect;
 
 import java.util.Collections;
 import java.util.Map;
