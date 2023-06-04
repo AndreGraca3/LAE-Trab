@@ -59,7 +59,8 @@ public class AutoRouterReflect extends AutoRouter {
                 }
             });
             try {
-                return (Optional<?>) method.invoke(controller, args.toArray());  // Handler invokes the method and returns its results
+                // Handler invokes the method and returns its results
+                return (Optional<?>) method.invoke(controller, args.toArray());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

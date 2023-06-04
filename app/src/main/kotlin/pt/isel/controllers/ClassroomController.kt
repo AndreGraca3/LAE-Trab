@@ -56,7 +56,7 @@ class ClassroomController {
         @ArRoute nr: Int,
         @ArBody s: Student
     ): Optional<Student> {
-        if(nr != s.nr) return Optional.empty() // return 409 instead ?
+        if(nr != s.nr) return Optional.empty()
         val stds = repo[classroom] ?: emptyList()
         repo[classroom] = stds.filter { it.nr != nr } + s
         return Optional.of(s)

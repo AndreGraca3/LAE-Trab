@@ -9,9 +9,9 @@ public class Parser {
 
     public static Object parse(String name, Class<?> type, Map<String, String> args) throws Exception {
 
-        if (type.isPrimitive() || type == String.class) return parseObject(type, args.get(name)); // "19" => 19
+        if (type.isPrimitive() || type == String.class) return parseObject(type, args.get(name));
 
-        /** From this point we know it is a complex Object **/
+        // From this point we know it is a complex Object
         if (type.getDeclaredConstructors().length != 1) throw new NoSuchMethodException();
 
         Constructor<?> c = type.getDeclaredConstructors()[0];

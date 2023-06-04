@@ -53,7 +53,7 @@ public class AutoRouterDynamic extends AutoRouter {
                 .implement(ArHttpHandler.class);
 
         // Add the field that holds the controller instance
-        cm.addField(controllerClass, "controller") // object / name
+        cm.addField(controllerClass, "controller")
                 .private_()
                 .final_();
 
@@ -99,7 +99,7 @@ public class AutoRouterDynamic extends AutoRouter {
         Class<?> parameterType = parameter.getType();
 
         // get value from corresponding map and cast to String
-        Variable parameterValue = handle.param(paramIdx).invoke("get", parameter.getName()).cast(String.class); // "i42d"
+        Variable parameterValue = handle.param(paramIdx).invoke("get", parameter.getName()).cast(String.class);
 
         if (parameterType == String.class) {
             return handle.var(parameterType).set(parameterValue);
@@ -117,7 +117,7 @@ public class AutoRouterDynamic extends AutoRouter {
         Variable[] cArgs = Arrays.stream(c.getParameters()).map(
                 p -> {
                     try {
-                        return buildParamVariable(handle, p, annotation); // parameterType
+                        return buildParamVariable(handle, p, annotation);
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeException(e);
                     }
